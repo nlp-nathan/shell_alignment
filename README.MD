@@ -21,4 +21,4 @@ Currently uses MobileNetV2. Trained with images received on October 9th. The dat
 
 Model | Input Size | Val MAE | Val MSE | Test MAE | Test MSE |
 ----- | ---------- | ----- | ----- |---- |---- |
-MobileNetV2 | 224 | 5.9782 | 184.8451 | 2.1697 | 11.7305 |
+MobileNetV2 | 224 | 4.5982 | 125.8690 | 1.8656 | 5.9582 |
