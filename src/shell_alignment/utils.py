@@ -1,7 +1,20 @@
 import cv2
 import numpy as np
+import tensorflow as tf
 import xmltodict
 
+
+TEMPLATE = np.float32([
+    (0.725, 0.05), (0.95, 0.20),
+    (0.725, 0.35), (0.95, 0.50),
+    (0.725, 0.65), (0.95, 0.80),
+    (0.725, 0.95), (0.275, 0.95),
+    (0.05, 0.80),  (0.275, 0.65),
+    (0.05, 0.50),  (0.275, 0.35),  
+    (0.05, 0.20), (0.275, 0.05),
+    (0.50, 0.20),
+    (0.50, 0.50),
+    (0.50, 0.80)])
 
 def get_keypoints(xml_path, image_name):
     """
@@ -174,3 +187,16 @@ def align_scutes(image, corners, centers, TEMPLATE, size=(500, 500)):
     aligned[black_pixels] = [255, 255, 255]
 
     return aligned
+
+
+def parse_tfrecord_fn(example):
+    feature_description = {
+        "image": tf.io.FixedLenFeature([], tf.string),
+        "path": tf.io.FixedLenFeature([], tf.string),
+        "keypoints": tf.io.VarLenFeature(tf.float32),
+
+    }
+    example = tf.io.parse_single_example(example, feature_description)
+    example["image"] = tf.io.decode_jpeg(example["image"], channels=3)
+    example["keypoints"] = tf.sparse.to_dense(example["keypoints"])
+    return example["image"], example["keypoints"]
